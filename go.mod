@@ -51,7 +51,7 @@ require (
 	github.com/prometheus/common v0.10.0
 	github.com/prometheus/prometheus v1.8.2-0.20200707115909-30505a202a4c
 	github.com/sercand/kuberesolver v2.4.0+incompatible // indirect
-	github.com/uber/jaeger-client-go v2.24.0+incompatible
+	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.2.0+incompatible
 	go.elastic.co/apm v1.5.0
 	go.elastic.co/apm/module/apmot v1.5.0
@@ -63,7 +63,7 @@ require (
 	golang.org/x/sys v0.0.0-20200728102440-3e129f6d46b1 // indirect
 	golang.org/x/text v0.3.3
 	google.golang.org/api v0.29.0
-	google.golang.org/genproto v0.0.0-20200710124503-20a17af7bd0e
+	google.golang.org/genproto v0.0.0-20200724131911-43cab4749ae7
 	google.golang.org/grpc v1.30.0
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/fsnotify.v1 v1.4.7
@@ -76,7 +76,8 @@ require (
 // See https://github.com/thanos-io/thanos/issues/1415
 replace (
 	// Make sure Cortex is not forcing us to some other Prometheus version.
-	github.com/prometheus/prometheus => github.com/prometheus/prometheus v1.8.2-0.20200714083622-823b218e1b2e
+	// TODO: This points to https://github.com/prometheus/prometheus/pull/7069. Remove and point to master once merged.
+	github.com/prometheus/prometheus => github.com/prometheus/prometheus v1.8.2-0.20200802085738-31929b83d50e
 	k8s.io/klog => k8s.io/klog v0.3.1
 	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20190228160746-b3a7cee44a30
 )
