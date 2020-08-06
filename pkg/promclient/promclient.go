@@ -390,8 +390,8 @@ func (c *Client) QueryInstant(ctx context.Context, base *url.URL, query string, 
 	// structure of the Result yet.
 	var m struct {
 		Data struct {
-			ResultType string          `json:"resultType"`
-			Result     json.RawMessage `json:"result"`
+			ResultType parser.ValueType `json:"resultType"`
+			Result     json.RawMessage  `json:"result"`
 		} `json:"data"`
 
 		Error     string `json:"error,omitempty"`
@@ -492,8 +492,8 @@ func (c *Client) QueryRange(ctx context.Context, base *url.URL, query string, st
 	// structure of the Result yet.
 	var m struct {
 		Data struct {
-			ResultType string          `json:"resultType"`
-			Result     json.RawMessage `json:"result"`
+			ResultType parser.ValueType `json:"resultType"`
+			Result     json.RawMessage  `json:"result"`
 		} `json:"data"`
 
 		Error     string `json:"error,omitempty"`
