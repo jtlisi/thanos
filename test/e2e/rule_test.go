@@ -38,6 +38,7 @@ const (
 	testAlertRuleAbortOnPartialResponse = `
 groups:
 - name: example_abort
+  interval: 500ms
   # Abort should be a default: partial_response_strategy: "ABORT"
   rules:
   - alert: TestAlert_AbortOnPartialResponse
@@ -51,6 +52,7 @@ groups:
 	testAlertRuleWarnOnPartialResponse = `
 groups:
 - name: example_warn
+  interval: 500ms
   partial_response_strategy: "WARN"
   rules:
   - alert: TestAlert_WarnOnPartialResponse
@@ -64,6 +66,7 @@ groups:
 	testAlertRuleAddedLaterWebHandler = `
 groups:
 - name: example
+  interval: 500ms
   partial_response_strategy: "WARN"
   rules:
   - alert: TestAlert_HasBeenLoadedViaWebHandler
@@ -386,11 +389,11 @@ func TestRule(t *testing.T) {
 
 		// Alerts sent.
 		testutil.Ok(t, r.WaitSumMetrics(e2e.Equals(0), "thanos_alert_sender_alerts_dropped_total"))
-		testutil.Ok(t, r.WaitSumMetrics(e2e.Greater(4), "thanos_alert_sender_alerts_sent_total"))
+		testutil.Ok(t, r.WaitSumMetrics(e2e.Greater(2), "thanos_alert_sender_alerts_sent_total"))
 
 		// Alerts received.
-		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(2), "alertmanager_alerts"))
-		testutil.Ok(t, am2.WaitSumMetrics(e2e.Greater(4), "alertmanager_alerts_received_total"))
+		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(1), "alertmanager_alerts"))
+		testutil.Ok(t, am2.WaitSumMetrics(e2e.Greater(2), "alertmanager_alerts_received_total"))
 		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(0), "alertmanager_alerts_invalid_total"))
 
 		// am1 not connected, so should not receive anything.
@@ -414,12 +417,12 @@ func TestRule(t *testing.T) {
 		}, "alertmanager_alerts_received_total"))
 
 		// Alerts received by both am1 and am2.
-		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(2), "alertmanager_alerts"))
-		testutil.Ok(t, am2.WaitSumMetrics(e2e.Greater(currentVal+4), "alertmanager_alerts_received_total"))
+		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(1), "alertmanager_alerts"))
+		testutil.Ok(t, am2.WaitSumMetrics(e2e.Greater(currentVal+2), "alertmanager_alerts_received_total"))
 		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(0), "alertmanager_alerts_invalid_total"))
 
-		testutil.Ok(t, am1.WaitSumMetrics(e2e.Equals(2), "alertmanager_alerts"))
-		testutil.Ok(t, am1.WaitSumMetrics(e2e.Greater(4), "alertmanager_alerts_received_total"))
+		testutil.Ok(t, am1.WaitSumMetrics(e2e.Equals(1), "alertmanager_alerts"))
+		testutil.Ok(t, am1.WaitSumMetrics(e2e.Greater(2), "alertmanager_alerts_received_total"))
 		testutil.Ok(t, am1.WaitSumMetrics(e2e.Equals(0), "alertmanager_alerts_invalid_total"))
 	})
 
@@ -443,8 +446,8 @@ func TestRule(t *testing.T) {
 		}, "alertmanager_alerts_received_total"))
 
 		// Alerts received by both am1 and am2.
-		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(2), "alertmanager_alerts"))
-		testutil.Ok(t, am2.WaitSumMetrics(e2e.Greater(currentValAm2+4), "alertmanager_alerts_received_total"))
+		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(1), "alertmanager_alerts"))
+		testutil.Ok(t, am2.WaitSumMetrics(e2e.Greater(currentValAm2+2), "alertmanager_alerts_received_total"))
 		testutil.Ok(t, am2.WaitSumMetrics(e2e.Equals(0), "alertmanager_alerts_invalid_total"))
 
 		// Am1 should not receive more alerts.
@@ -473,13 +476,6 @@ func TestRule(t *testing.T) {
 		{
 			"__name__":   "ALERTS",
 			"severity":   "page",
-			"alertname":  "TestAlert_AbortOnPartialResponse",
-			"alertstate": "firing",
-			"replica":    "1",
-		},
-		{
-			"__name__":   "ALERTS",
-			"severity":   "page",
 			"alertname":  "TestAlert_HasBeenLoadedViaWebHandler",
 			"alertstate": "firing",
 			"replica":    "1",
@@ -494,11 +490,11 @@ func TestRule(t *testing.T) {
 	})
 
 	expAlertLabels := []model.LabelSet{
-		{
-			"severity":  "page",
-			"alertname": "TestAlert_AbortOnPartialResponse",
-			"replica":   "1",
-		},
+		// {
+		// 	"severity":  "page",
+		// 	"alertname": "TestAlert_AbortOnPartialResponse",
+		// 	"replica":   "1",
+		// },
 		{
 			"severity":  "page",
 			"alertname": "TestAlert_HasBeenLoadedViaWebHandler",

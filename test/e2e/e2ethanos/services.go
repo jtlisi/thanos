@@ -26,7 +26,7 @@ import (
 	"github.com/thanos-io/thanos/pkg/receive"
 )
 
-const logLevel = "info"
+const logLevel = "debug"
 
 // Same as default for now.
 var defaultBackoffConfig = util.BackoffConfig{
