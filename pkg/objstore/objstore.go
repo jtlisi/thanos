@@ -437,6 +437,99 @@ func (b *metricBucket) Name() string {
 	return b.bkt.Name()
 }
 
+type prefixedBucket struct {
+	bkt    Bucket
+	prefix string
+}
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+//NewPrefixedBucket returns a new prefixedBucket.
+=======
+//NewPrefixedBucket returns a new prefixedBucket
+>>>>>>> 13e4f935... wrapper function created, build successful but unit test remaining
+=======
+//NewPrefixedBucket returns a new prefixedBucket.
+>>>>>>> dc1e4c73... linting issue:fix 1
+=======
+// NewPrefixedBucket returns a new prefixedBucket.
+>>>>>>> d77e236f... Update pkg/objstore/objstore.go
+func NewPrefixedBucket(bkt Bucket, prefix string) *prefixedBucket {
+	return &prefixedBucket{
+		bkt:    bkt,
+		prefix: prefix,
+	}
+}
+
+func (pbkt *prefixedBucket) WithExpectedErrs(expectedFunc IsOpFailureExpectedFunc) Bucket {
+	if ib, ok := pbkt.bkt.(InstrumentedBucket); ok {
+		return &prefixedBucket{
+			bkt:    ib.WithExpectedErrs(expectedFunc),
+			prefix: pbkt.prefix,
+		}
+	}
+	return pbkt
+}
+
+func (pbkt *prefixedBucket) ReaderWithExpectedErrs(expectedFunc IsOpFailureExpectedFunc) BucketReader {
+	return pbkt.WithExpectedErrs(expectedFunc)
+}
+
+func (pbkt *prefixedBucket) Name() string {
+	return pbkt.bkt.Name()
+}
+
+func (pbkt *prefixedBucket) Upload(ctx context.Context, name string, r io.Reader) (err error) {
+	pname := filepath.Join(pbkt.prefix, name)
+	err = pbkt.bkt.Upload(ctx, pname, r)
+	return
+}
+
+func (pbkt *prefixedBucket) Delete(ctx context.Context, name string) (err error) {
+	pname := filepath.Join(pbkt.prefix, name)
+	err = pbkt.bkt.Delete(ctx, pname)
+	return
+}
+
+func (pbkt *prefixedBucket) Close() error {
+	return pbkt.bkt.Close()
+}
+
+func (pbkt *prefixedBucket) Iter(ctx context.Context, dir string, f func(string) error) error {
+	pdir := filepath.Join(pbkt.prefix, dir)
+	if pbkt.prefix != "" {
+		return pbkt.bkt.Iter(ctx, pdir, func(s string) error {
+			return f(strings.Join(strings.Split(s, pbkt.prefix)[1:], "/"))
+		})
+	}
+	return pbkt.bkt.Iter(ctx, pdir, f)
+}
+
+func (pbkt *prefixedBucket) Get(ctx context.Context, name string) (io.ReadCloser, error) {
+	pname := filepath.Join(pbkt.prefix, name)
+	return pbkt.bkt.Get(ctx, pname)
+}
+
+func (pbkt *prefixedBucket) GetRange(ctx context.Context, name string, off, length int64) (io.ReadCloser, error) {
+	pname := filepath.Join(pbkt.prefix, name)
+	return pbkt.bkt.GetRange(ctx, pname, off, length)
+}
+
+func (pbkt *prefixedBucket) Exists(ctx context.Context, name string) (bool, error) {
+	pname := filepath.Join(pbkt.prefix, name)
+	return pbkt.bkt.Exists(ctx, pname)
+}
+
+func (pbkt *prefixedBucket) IsObjNotFoundErr(err error) bool {
+	return pbkt.bkt.IsObjNotFoundErr(err)
+}
+
+func (pbkt *prefixedBucket) Attributes(ctx context.Context, name string) (ObjectAttributes, error) {
+	pname := filepath.Join(pbkt.prefix, name)
+	return pbkt.bkt.Attributes(ctx, pname)
+}
+
 type timingReadCloser struct {
 	io.ReadCloser
 

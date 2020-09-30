@@ -93,6 +93,7 @@ config:
     kms_key_id: ""
     kms_encryption_context: {}
     encryption_key: ""
+prefix: ""
 ```
 
 At a minimum, you will need to provide a value for the `bucket`, `endpoint`, `access_key`, and `secret_key` keys. The rest of the keys are optional.
@@ -243,6 +244,7 @@ type: GCS
 config:
   bucket: ""
   service_account: ""
+prefix: ""
 ```
 
 ##### Using GOOGLE_APPLICATION_CREDENTIALS
@@ -327,6 +329,7 @@ config:
   container: ""
   endpoint: ""
   max_retries: 0
+prefix: ""
 ```
 
 #### OpenStack Swift
@@ -355,6 +358,7 @@ config:
   project_domain_name: ""
   region_name: ""
   container_name: ""
+prefix: ""
 ```
 
 #### Tencent COS
@@ -372,6 +376,7 @@ config:
   app_id: ""
   secret_key: ""
   secret_id: ""
+prefix: ""
 ```
 
 Set the flags `--objstore.config-file` to reference to the configuration file.
@@ -390,6 +395,7 @@ config:
   bucket: ""
   access_key_id: ""
   access_key_secret: ""
+prefix: ""
 ```
 
 Use --objstore.config-file to reference to this configuration file.
@@ -409,6 +415,7 @@ This is mainly useful for testing and demos.
 type: FILESYSTEM
 config:
   directory: ""
+prefix: ""
 ```
 
 ### How to add a new client to Thanos?
@@ -926,3 +933,18 @@ in-file offset (lower 4 bytes) and segment sequence number (upper 4 bytes).
 #### Tombstones
 
 Thanos ignores any tombstones files. They are also deleted by sidecar on upload.
+
+## Prefix
+
+Prefix field allows adding an optional prefix to block (`/<ulid>`) and block files which are uploaded by any block "producer" (e.g sidecar, ruler, receiver).
+The sample config below ensures that all the bucket operations e.g: upload, delete, list, etc are performed on `/tenant-0` path pf the object store only.
+Sample object store config:
+
+```yaml
+type: S3
+config:
+  <provider specific config/s>
+prefix: tenant-0
+```
+
+It is worth mentioning that this feature can be used to store data of different tenants in different paths of the same bucket. However, for such use-cases, putting data on different paths WILL REQUIRE totally separate Store Gateway / Compactor by design.
