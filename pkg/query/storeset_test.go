@@ -789,6 +789,10 @@ func TestStoreSet_Rules_Discovery(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{}
 			},
+			storeType: component.Rule,
+		},
+	})
+	testutil.Ok(t, err)
 	defer stores.Close()
 
 	type discoveryState struct {

@@ -442,19 +442,7 @@ type prefixedBucket struct {
 	prefix string
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 //NewPrefixedBucket returns a new prefixedBucket.
-=======
-//NewPrefixedBucket returns a new prefixedBucket
->>>>>>> 13e4f935... wrapper function created, build successful but unit test remaining
-=======
-//NewPrefixedBucket returns a new prefixedBucket.
->>>>>>> dc1e4c73... linting issue:fix 1
-=======
-// NewPrefixedBucket returns a new prefixedBucket.
->>>>>>> d77e236f... Update pkg/objstore/objstore.go
 func NewPrefixedBucket(bkt Bucket, prefix string) *prefixedBucket {
 	return &prefixedBucket{
 		bkt:    bkt,
